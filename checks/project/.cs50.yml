@@ -1,0 +1,12 @@
+submit50:
+  files: &submit50_files
+    - !exclude "__pycache__"
+    - !exclude "node_modules"
+    - !exclude "venv"
+    - !require README.md
+  style: false
+
+check50:
+  files: *submit50_files
+
+  
