@@ -2,7 +2,6 @@
 RUSTC      := rustc
 CC         := gcc
 PYTHON     := python3
-GEN_SCRIPT := ../tools/generator.py
 
 # Extra libs sometimes needed when linking Rust staticlibs that use std
 RUST_LINK_LIBS := -lpthread -ldl -lm
@@ -26,30 +25,46 @@ FORCE:
 # Explicit rule for Makefile to prevent pattern rule from matching it
 Makefile: ;
 
+# Enable secondary expansion for pattern rule prerequisites
+.SECONDEXPANSION:
+
 # Pattern rule to build executable from path OR run check50
 # Example: make pset1/world/hello or just make hello
 # Looks for: dir/file_stub.c and dir/rust/file.rs
 # Produces: dir/file executable (or runs check50 if check=1)
 # Optional: check_path=path/to/check to override default parent dir heuristic
-%: $(if $(check),FORCE)
+%: $$(if $$(check),FORCE,$$(dir $$@)$$(notdir $$@).c $$(dir $$@)rust/$$(notdir $$@).rs)
 ifeq ($(filter Makefile,$@),)
 ifdef check
 	$(eval FULL_PATH := $(patsubst %/,%,$@))
 	$(eval CHECK_DIR := $(dir $(FULL_PATH)))
 ifdef check_path
 	$(eval CHECK_NAME := $(check_path))
+	@echo "Running check50 in $(CHECK_DIR)..."
+	@echo "Using custom check path: checks/$(CHECK_NAME)"
 else
 	$(eval CHECK_NAME := $(notdir $(patsubst %/,%,$(CHECK_DIR))))
-endif
 	@echo "Running check50 in $(CHECK_DIR)..."
+endif
 	@cd $(CHECK_DIR) && check50 ivanharvard/cs50r/main/checks/$(CHECK_NAME) --local
 else
 	$(eval DIR := $(dir $@))
 	$(eval BASENAME := $(notdir $@))
 	$(eval RUST_FILE := $(if $(DIR),$(DIR),.)rust/$(BASENAME).rs)
-	$(eval STUB_FILE := $(if $(DIR),$(DIR),.)$(BASENAME)_stub.c)
+	$(eval STUB_FILE := $(if $(DIR),$(DIR),.)$(BASENAME).c)
 	$(eval RUST_LIB := $(if $(DIR),$(DIR),.).librust_$(BASENAME).a)
-	$(RUSTC) --crate-type staticlib $(RUST_FILE) -o $(RUST_LIB)
+
+	@if grep -Eq "^\s*//.*#\[no_mangle\]" $(RUST_FILE); then \
+    echo "ERROR: Found #[no_mangle] only inside comments in $(RUST_FILE)."; \
+    exit 1; \
+	fi
+
+	@if ! grep -Eq "^\s*#\[no_mangle\].*" $(RUST_FILE); then \
+		echo "ERROR: $(RUST_FILE) must use #[no_mangle]."; \
+		exit 1; \
+	fi
+
+	cd $(if $(DIR),$(DIR),.) && $(RUSTC) --crate-type staticlib --edition 2021 rust/$(BASENAME).rs -o .librust_$(BASENAME).a
 	$(CC) $(STUB_FILE) $(RUST_LIB) $(RUST_LINK_LIBS) -o $@
 	@rm -f $(RUST_LIB)
 	@echo "Built: $@"
