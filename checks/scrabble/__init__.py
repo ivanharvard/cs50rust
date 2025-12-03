@@ -37,7 +37,7 @@ def exists():
 @check50.check(exists)
 def compiles():
     """scrabble.c compiles"""
-    check50.c.compile("scrabble.c", lcs50=True)
+    check50.run("make scrabble")
 
 @check50.check(compiles)
 def tie_letter_case():

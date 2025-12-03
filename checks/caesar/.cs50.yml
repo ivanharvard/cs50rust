@@ -1,7 +1,5 @@
 check50:
   files: &check50_files
-    - !exclude "*"
-    - !require caesar.c
-
+    - !include "*"
 submit50:
   files: *check50_files

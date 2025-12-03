@@ -13,7 +13,7 @@ def exists():
 @check50.check(exists)
 def compiles():
     """reverse.c compiles"""
-    check50.c.compile("reverse.c", lcs50=True)
+    check50.run("make reverse")
 
 
 @check50.check(compiles)

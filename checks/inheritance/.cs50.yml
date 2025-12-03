@@ -5,8 +5,7 @@ lab50:
 
 check50:
   files: &check50_files
-    - !exclude "*"
-    - !require inheritance.c
+    - !include "*"
 
 submit50:
   files: *check50_files

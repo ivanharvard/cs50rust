@@ -1,9 +1,6 @@
 submit50:
   files: &submit50_files
-    - !exclude "__pycache__"
-    - !exclude "node_modules"
-    - !exclude "venv"
-    - !require README.md
+    - !include "*"
   style: false
 
 check50:

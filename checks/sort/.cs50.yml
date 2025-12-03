@@ -17,8 +17,7 @@ lab50:
 
 check50:
   files: &check50_files
-    - !exclude "*"
-    - !require answers.txt
+    - !include "*"
 
 submit50:
   files: *check50_files

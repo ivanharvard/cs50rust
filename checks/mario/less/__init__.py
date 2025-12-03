@@ -10,7 +10,7 @@ def exists():
 @check50.check(exists)
 def compiles():
     """mario.c compiles"""
-    check50.c.compile("mario.c", lcs50=True)
+    check50.run("make mario")
 
 @check50.check(compiles)
 def test_reject_negative():

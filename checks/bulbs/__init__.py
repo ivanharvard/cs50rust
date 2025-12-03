@@ -11,7 +11,7 @@ def exists():
 @check50.check(exists)
 def compiles():
     """bulbs.c compiles"""
-    check50.c.compile("bulbs.c", lcs50=True)
+    check50.run("make bulbs")
 
 
 @check50.check(compiles)

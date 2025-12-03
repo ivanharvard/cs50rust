@@ -9,7 +9,7 @@ def exists():
 @check50.check(exists)
 def compiles():
     """credit.c compiles"""
-    check50.c.compile("credit.c", lcs50=True)
+    check50.run("make credit")
 
 def _test_credit_card(card_number, expected_output):
     """Helper function to test credit card validation with proper error handling"""

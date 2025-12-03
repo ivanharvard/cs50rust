@@ -13,7 +13,7 @@ def exists():
 @check50.check(exists)
 def compiles():
     """plurality compiles"""
-    check50.c.compile("plurality.c", lcs50=True)
+    check50.run("make plurality")
     plurality = re.sub(r"int\s+main\(", "int distro_main(", open("plurality.c").read())
     testing = open("testing.c").read()
     with open("plurality_test.c", "w") as f:

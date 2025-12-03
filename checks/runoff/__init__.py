@@ -13,7 +13,7 @@ def exists():
 @check50.check(exists)
 def compiles():
     """runoff compiles"""
-    check50.c.compile("runoff.c", lcs50=True)
+    check50.run("make runoff")
     runoff = re.sub(r"int\s+main\(", "int distro_main(", open("runoff.c").read())
     testing = open("testing.c").read()
     with open("runoff_test.c", "w") as f:

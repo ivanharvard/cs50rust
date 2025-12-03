@@ -13,7 +13,7 @@ def exists():
 @check50.check(exists)
 def compiles():
     """tideman compiles"""
-    check50.c.compile("tideman.c", lcs50=True)
+    check50.run("make tideman")
     tideman = re.sub(r"int\s+main\(", "int distro_main(", open("tideman.c").read())
     testing = open("testing.c").read()
     with open("tideman_test.c", "w") as f:

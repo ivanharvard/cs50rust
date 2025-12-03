@@ -12,12 +12,12 @@ def exists():
 @check50.check(exists)
 def compiles():
     """inheritance.c compiles"""
-    check50.c.compile("inheritance.c", lcs50=True)
+    check50.run("make inheritance")
 
 @check50.check(compiles)
 def compiles_test():
     """inheritance compiles"""
-    check50.c.compile("inheritance.c", lcs50=True)
+    check50.run("make inheritance")
     inheritance = re.sub(r"int\s+main\(", "int distro_main(", open("inheritance.c").read())
     testing = open("testing.c").read()
     with open("inheritance_test.c", "w") as f:

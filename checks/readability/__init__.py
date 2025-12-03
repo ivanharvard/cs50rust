@@ -9,7 +9,7 @@ def exists():
 @check50.check(exists)
 def compiles():
     """readability.c compiles"""
-    check50.c.compile("readability.c", lcs50=True)
+    check50.run("make readability")
 
 @check50.check(compiles)
 def single_sentence():
