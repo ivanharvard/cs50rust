@@ -15,17 +15,7 @@ def exists():
 @check50.check(exists)
 def compiles():
     """plurality compiles"""
-    import shutil
-    import os
-    
     check50.run("make plurality")
-    
-    # Copy Makefile and rust directory to compile directory
-    if os.path.isfile("../../Makefile"):
-        shutil.copy("../../Makefile", "Makefile")
-    if os.path.isdir("rust"):
-        # rust already exists
-        pass
     
     plurality = re.sub(r"int\s+main\(", "int distro_main(", open("plurality.c").read())
     testing = open("testing.c").read()
@@ -33,6 +23,23 @@ def compiles():
         f.write(plurality)
         f.write("\n")
         f.write(testing)
+    
+    # Write a minimal Makefile for compiling plurality_test
+    makefile_content = """
+RUSTC := rustc
+CC := gcc
+RUST_LINK_LIBS := -lpthread -ldl -lm -lcs50
+
+%_test: %_test.c
+	$(eval BASENAME := $(patsubst %_test,%,$(notdir $@)))
+	$(eval RUST_SRC_NAME := $(if $(rust_src),$(rust_src),$(BASENAME)))
+	$(RUSTC) --crate-type staticlib --edition 2021 rust/$(RUST_SRC_NAME).rs -o .librust_$(BASENAME).a
+	$(CC) $@.c .librust_$(BASENAME).a $(RUST_LINK_LIBS) -o $@
+	@rm -f .librust_$(BASENAME).a
+"""
+    with open("Makefile", "w") as f:
+        f.write(makefile_content)
+    
     try:
         check50.run("make plurality_test rust_src=plurality").exit(0)
     except check50.Failure as e:
