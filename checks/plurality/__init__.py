@@ -27,7 +27,7 @@ def compiles():
     import os
     if os.path.isdir("rust"):
         shutil.copytree("rust", "rust_test", dirs_exist_ok=True)
-    check50.run("make plurality_test rust_src=plurality")
+    check50.run("make plurality_test rust_src=plurality").exit(0)
 
 @check50.check(compiles)
 @check50.hidden("vote function did not return true")
