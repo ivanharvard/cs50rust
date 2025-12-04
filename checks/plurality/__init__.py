@@ -15,7 +15,18 @@ def exists():
 @check50.check(exists)
 def compiles():
     """plurality compiles"""
+    import shutil
+    import os
+    
     check50.run("make plurality")
+    
+    # Copy Makefile and rust directory to compile directory
+    if os.path.isfile("../../Makefile"):
+        shutil.copy("../../Makefile", "Makefile")
+    if os.path.isdir("rust"):
+        # rust already exists
+        pass
+    
     plurality = re.sub(r"int\s+main\(", "int distro_main(", open("plurality.c").read())
     testing = open("testing.c").read()
     with open("plurality_test.c", "w") as f:
