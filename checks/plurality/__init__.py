@@ -22,14 +22,7 @@ def compiles():
         f.write(plurality)
         f.write("\n")
         f.write(testing)
-    check50.run("make plurality_test")
-
-@check50.check(compiles)
-def debug_print_dir():
-    """debugging"""
-    out = check50.run("find .").stdout()
-    out += check50.run("echo; cat plurality_test.c").stdout()
-    raise check50.Failure(out)
+    check50.run("make plurality_test rust_src=plurality")
 
 
 @check50.check(compiles)
