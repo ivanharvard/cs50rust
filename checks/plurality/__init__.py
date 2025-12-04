@@ -2,7 +2,7 @@ import check50
 import check50.c
 import re
 
-check50.config.set_truncation_len(100)
+check50.config.set_truncate_len(100)
 
 
 @check50.check()
