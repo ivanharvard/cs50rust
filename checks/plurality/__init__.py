@@ -26,7 +26,7 @@ def compiles():
         check50.run("make plurality_test rust_src=plurality").exit(0)
     except check50.Failure as e:
         result = check50.run("make plurality_test rust_src=plurality")
-        raise check50.Failure(f"Make failed:\n{result.stdout()}\n{result.stderr()}")
+        raise check50.Failure(f"Make failed:\n{result.stdout()}")
 
 @check50.check(compiles)
 @check50.hidden("vote function did not return true")
