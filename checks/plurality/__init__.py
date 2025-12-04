@@ -22,12 +22,12 @@ def compiles():
         f.write(plurality)
         f.write("\n")
         f.write(testing)
-    # Copy rust directory from submission
-    import shutil
+    # Debug: show what files exist
     import os
-    if os.path.isdir("rust"):
-        shutil.copytree("rust", "rust_test", dirs_exist_ok=True)
-    check50.run("make plurality_test rust_src=plurality").exit(0)
+    try:
+        result = check50.run("ls -la && make plurality_test rust_src=plurality")
+    except check50.Failure as e:
+        raise check50.Failure(f"Make failed. Output:\n{e}")
 
 @check50.check(compiles)
 @check50.hidden("vote function did not return true")
