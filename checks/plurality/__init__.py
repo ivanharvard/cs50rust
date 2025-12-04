@@ -16,13 +16,17 @@ def exists():
 def compiles():
     """plurality compiles"""
     check50.run("make plurality")
-    check50.include("rust/")
     plurality = re.sub(r"int\s+main\(", "int distro_main(", open("plurality.c").read())
     testing = open("testing.c").read()
     with open("plurality_test.c", "w") as f:
         f.write(plurality)
         f.write("\n")
         f.write(testing)
+    # Copy rust directory from submission
+    import shutil
+    import os
+    if os.path.isdir("rust"):
+        shutil.copytree("rust", "rust_test", dirs_exist_ok=True)
     check50.run("make plurality_test rust_src=plurality")
 
 @check50.check(compiles)
