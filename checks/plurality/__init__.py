@@ -20,7 +20,7 @@ def compiles():
         f.write(plurality)
         f.write("\n")
         f.write(testing)
-    check50.c.compile("plurality_test.c", lcs50=True)
+    check50.run("make plurality_test")
 
 
 @check50.check(compiles)
