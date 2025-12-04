@@ -10,6 +10,7 @@ def exists():
     """plurality.c exists"""
     check50.exists("plurality.c")
     check50.include("testing.c")
+    check50.include("Makefile")
 
 
 @check50.check(exists)
