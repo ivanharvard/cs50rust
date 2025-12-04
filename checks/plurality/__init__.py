@@ -23,28 +23,7 @@ def compiles():
         f.write(plurality)
         f.write("\n")
         f.write(testing)
-    
-    # Write a minimal Makefile for compiling plurality_test
-    makefile_content = """
-RUSTC := rustc
-CC := gcc
-RUST_LINK_LIBS := -lpthread -ldl -lm -lcs50
-
-%_test: %_test.c
-	$(eval BASENAME := $(patsubst %_test,%,$(notdir $@)))
-	$(eval RUST_SRC_NAME := $(if $(rust_src),$(rust_src),$(BASENAME)))
-	$(RUSTC) --crate-type staticlib --edition 2021 rust/$(RUST_SRC_NAME).rs -o .librust_$(BASENAME).a
-	$(CC) $@.c .librust_$(BASENAME).a $(RUST_LINK_LIBS) -o $@
-	@rm -f .librust_$(BASENAME).a
-"""
-    with open("Makefile", "w") as f:
-        f.write(makefile_content)
-    
-    try:
-        check50.run("make plurality_test rust_src=plurality").exit(0)
-    except check50.Failure as e:
-        result = check50.run("make plurality_test rust_src=plurality")
-        raise check50.Failure(f"Make failed:\n{result.stdout()}")
+    check50.run("make plurality_test rust_src=plurality").exit(0)
 
 @check50.check(compiles)
 @check50.hidden("vote function did not return true")
