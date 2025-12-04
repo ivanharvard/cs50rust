@@ -22,12 +22,13 @@ def compiles():
         f.write(plurality)
         f.write("\n")
         f.write(testing)
-    check50.run("make plurality_test")
+    check50.run("make plurality_test").exit(0)
 
 @check50.check(compiles)
 def debug_print_dir():
-    """debugging function print_dir exists"""
+    """debugging"""
     out = check50.run("find .").stdout()
+    out += check50.run("echo; cat plurality_test.c").stdout()
     raise check50.Failure(out)
 
 
