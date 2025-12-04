@@ -22,7 +22,7 @@ def compiles():
         f.write(plurality)
         f.write("\n")
         f.write(testing)
-    check50.run("make plurality_test rust_src=plurality")
+    check50.run("make plurality_test rust_src=plurality").exit(0)
 
 
 @check50.check(compiles)
