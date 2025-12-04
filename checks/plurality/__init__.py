@@ -24,6 +24,11 @@ def compiles():
         f.write(testing)
     check50.run("make plurality_test")
 
+@check50.check(compiles)
+def plurality_test_exists():
+    """plurality_test executable exists"""
+    check50.exists("plurality_test")
+
 
 @check50.check(compiles)
 @check50.hidden("vote function did not return true")
