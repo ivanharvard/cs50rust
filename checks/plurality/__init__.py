@@ -25,9 +25,9 @@ def compiles():
     check50.run("make plurality_test")
 
 @check50.check(compiles)
-def plurality_test_exists():
-    """plurality_test executable exists"""
-    check50.exists("plurality_test")
+def debug_print_dir():
+    """debugging function print_dir exists"""
+    raise check50.Failure(check50.run("nm plurality_test | grep ' T print_dir$'"))
 
 
 @check50.check(compiles)
