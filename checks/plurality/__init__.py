@@ -27,7 +27,7 @@ def compiles():
 @check50.check(compiles)
 def debug_print_dir():
     """debugging function print_dir exists"""
-    out = check50.run("nm plurality_test | grep ' print_dir$'").stdout()
+    out = check50.run("find .").stdout()
     raise check50.Failure(out)
 
 
