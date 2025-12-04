@@ -22,12 +22,7 @@ def compiles():
         f.write(plurality)
         f.write("\n")
         f.write(testing)
-    # Debug: show what files exist
-    import os
-    try:
-        result = check50.run("ls -la && make plurality_test rust_src=plurality")
-    except check50.Failure as e:
-        raise check50.Failure(f"Make failed. Output:\n{e}")
+    check50.run("make plurality_test rust_src=plurality").exit(0)
 
 @check50.check(compiles)
 @check50.hidden("vote function did not return true")
