@@ -16,14 +16,14 @@ def exists():
 def compiles():
     """plurality compiles"""
     check50.run("make plurality")
+    check50.include("rust/")
     plurality = re.sub(r"int\s+main\(", "int distro_main(", open("plurality.c").read())
     testing = open("testing.c").read()
     with open("plurality_test.c", "w") as f:
         f.write(plurality)
         f.write("\n")
         f.write(testing)
-    out = check50.run("make plurality_test rust_src=plurality").stdout()
-    raise check50.Failure(out)
+    check50.run("make plurality_test rust_src=plurality")
 
 @check50.check(compiles)
 @check50.hidden("vote function did not return true")
