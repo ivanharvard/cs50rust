@@ -4,7 +4,7 @@ CC         := gcc
 PYTHON     := python3
 
 # Extra libs sometimes needed when linking Rust staticlibs that use std
-RUST_LINK_LIBS := -lpthread -ldl -lm
+RUST_LINK_LIBS := -lpthread -ldl -lm -lcs50
 
 # Default target: show help
 .PHONY: help
@@ -28,6 +28,21 @@ Makefile: ;
 # Enable secondary expansion for pattern rule prerequisites
 .SECONDEXPANSION:
 
+# Explicit rule for *_test targets (used by check50 for unit tests)
+# Compiles rust_src (default: same name) and links with C test file
+%_test: $$(notdir $$@).c
+	$(eval DIR := $(dir $@))
+	$(eval BASENAME := $(patsubst %_test,%,$(notdir $@)))
+	$(eval RUST_SRC_NAME := $(if $(rust_src),$(rust_src),$(BASENAME)))
+	$(eval RUST_FILE := $(if $(DIR),$(DIR),.)rust/$(RUST_SRC_NAME).rs)
+	$(eval TEST_FILE := $@.c)
+	$(eval RUST_LIB := $(if $(DIR),$(DIR),.).librust_$(BASENAME).a)
+
+	cd $(if $(DIR),$(DIR),.) && $(RUSTC) --crate-type staticlib --edition 2021 rust/$(RUST_SRC_NAME).rs -o .librust_$(BASENAME).a
+	$(CC) $(TEST_FILE) $(RUST_LIB) $(RUST_LINK_LIBS) -o $@
+	@rm -f $(RUST_LIB)
+	@echo "Built: $@"
+
 # Pattern rule to build executable from path OR run check50
 # Example: make pset1/world/hello or just make hello
 # Looks for: dir/file_stub.c and dir/rust/file.rs
@@ -50,7 +65,8 @@ endif
 else
 	$(eval DIR := $(dir $@))
 	$(eval BASENAME := $(notdir $@))
-	$(eval RUST_FILE := $(if $(DIR),$(DIR),.)rust/$(BASENAME).rs)
+	$(eval RUST_SRC_NAME := $(if $(rust_src),$(rust_src),$(BASENAME)))
+	$(eval RUST_FILE := $(if $(DIR),$(DIR),.)rust/$(RUST_SRC_NAME).rs)
 	$(eval STUB_FILE := $(if $(DIR),$(DIR),.)$(BASENAME).c)
 	$(eval RUST_LIB := $(if $(DIR),$(DIR),.).librust_$(BASENAME).a)
 
@@ -64,14 +80,10 @@ else
 		exit 1; \
 	fi
 
-	cd $(if $(DIR),$(DIR),.) && $(RUSTC) --crate-type staticlib --edition 2021 rust/$(BASENAME).rs -o .librust_$(BASENAME).a
+	cd $(if $(DIR),$(DIR),.) && $(RUSTC) --crate-type staticlib --edition 2021 rust/$(RUST_SRC_NAME).rs -o .librust_$(BASENAME).a
 	$(CC) $(STUB_FILE) $(RUST_LIB) $(RUST_LINK_LIBS) -o $@
 	@rm -f $(RUST_LIB)
 	@echo "Built: $@"
 	@echo "Run with: ./$@"
 endif
 endif
-
-.PHONY: clean
-clean:
-	rm -f hello *.o .librust_*.a
