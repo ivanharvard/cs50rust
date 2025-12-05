@@ -20,7 +20,7 @@ def compiles():
         f.write(tideman)
         f.write("\n")
         f.write(testing)
-    check50.c.compile("tideman_test.c", lcs50=True)
+    check50.run("make tideman_test rust_src=tideman").exit(0)
 
 @check50.check(compiles)
 @check50.hidden("vote function did not return true")

@@ -8,6 +8,7 @@ def exists():
     """runoff.c exists"""
     check50.exists("runoff.c")
     check50.include("testing.c")
+    check50.include("Makefile") 
 
 
 @check50.check(exists)
@@ -20,7 +21,7 @@ def compiles():
         f.write(runoff)
         f.write("\n")
         f.write(testing)
-    check50.c.compile("runoff_test.c", lcs50=True)
+    check50.run("make runoff_test rust_src=runoff").exit(0)
 
 
 @check50.check(compiles)
