@@ -8,6 +8,7 @@ def exists():
     """tideman.c exists"""
     check50.exists("tideman.c")
     check50.include("testing.c")
+    check50.include("Makefile")
 
 
 @check50.check(exists)
