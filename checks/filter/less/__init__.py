@@ -51,7 +51,8 @@ def exists():
 @check50.check(exists)
 def compiles():
     """filter compiles"""
-    check50.run("make").exit(0)
+    # Use the python build helper instead of make to exercise make.py
+    check50.run("python3 ../../../make.py pset4/filter-less/filter").exit(0)
 
 @check50.check(compiles)
 def grayscale_single_pixel():
