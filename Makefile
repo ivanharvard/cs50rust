@@ -1,3 +1,10 @@
+# Explicit rule for pset4/filter-less/filter with Rust and helpers.c
+pset4/filter-less/filter: pset4/filter-less/filter.c pset4/filter-less/helpers.c pset4/filter-less/rust/filter.rs
+	@cd pset4/filter-less && rustc --crate-type staticlib --edition 2021 rust/filter.rs -o .librust_filter.a
+	clang -ggdb3 -gdwarf-4 -O0 -Qunused-arguments -std=c11 -Wall -Werror -Wextra -Wno-gnu-folding-constant -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wshadow -lm -o $@ pset4/filter-less/filter.c pset4/filter-less/helpers.c pset4/filter-less/.librust_filter.a
+	@rm -f pset4/filter-less/.librust_filter.a
+	@echo "Built: $@"
+
 # ---- config ----
 RUSTC      := rustc
 CC         := gcc
@@ -57,11 +64,12 @@ ifdef check_path
 	$(eval CHECK_NAME := $(check_path))
 	@echo "Running check50 in $(CHECK_DIR)..."
 	@echo "Using custom check path: checks/$(CHECK_NAME)"
+	@cd checks/$(CHECK_NAME) && check50 --local .
 else
 	$(eval CHECK_NAME := $(notdir $(patsubst %/,%,$(CHECK_DIR))))
 	@echo "Running check50 in $(CHECK_DIR)..."
-endif
 	@cd $(CHECK_DIR) && check50 ivanharvard/cs50r/main/checks/$(CHECK_NAME) --local
+endif
 else
 	$(eval DIR := $(dir $@))
 	$(eval BASENAME := $(notdir $@))

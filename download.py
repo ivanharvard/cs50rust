@@ -1,4 +1,8 @@
 import argparse
+import os
+import zipfile
+import requests
+from io import BytesIO
 
 def main():
     parser = argparse.ArgumentParser(description="Download and extract a ZIP file from a URL into a specified directory.")
@@ -15,10 +19,6 @@ def main():
     url = args.url
     dir = args.dir
 
-    import os
-    import zipfile
-    import requests
-    from io import BytesIO
     response = requests.get(url)
     with zipfile.ZipFile(BytesIO(response.content)) as z:
         z.extractall(dir)
