@@ -46,13 +46,24 @@ def log(lines):
 def exists():
     """helpers.c exists"""
     check50.exists("helpers.c")
-    check50.include("Makefile", "bmp.h", "helpers.h", "testing.c")
+    check50.exists("filter.c")
+    check50.exists("rust/filter.rs")
+    check50.include("bmp.h", "helpers.h", "testing.c")
 
 @check50.check(exists)
 def compiles():
     """filter compiles"""
-    # Use the python build helper instead of make to exercise make.py
-    check50.run("python3 ../../../make.py pset4/filter-less/filter").exit(0)
+    check50.run(
+        "rustc --crate-type staticlib --edition 2021 rust/filter.rs -o .librust_filter.a"
+    ).exit(0)
+
+    check50.run(
+        "clang -ggdb3 -gdwarf-4 -O0 -Qunused-arguments -std=c11 "
+        "-Wall -Werror -Wextra -Wno-gnu-folding-constant "
+        "-Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wshadow "
+        "-o testing testing.c helpers.c .librust_filter.a "
+        "-lpthread -ldl -lm -lcs50"
+    ).exit(0)
 
 @check50.check(compiles)
 def grayscale_single_pixel():
