@@ -108,29 +108,33 @@ fn blur(image: &mut cs50::Array2D<'_, RGBTRIPLE>) {
 
     for row in 0..image.height {
         for col in 0..image.width {
-            let mut sum: RGBTRIPLE = RGBTRIPLE { 
-                rgbtRed: 0, 
-                rgbtGreen: 0, 
-                rgbtBlue: 0 
-            };
+            let mut sum_red: u16 = 0;
+            let mut sum_green: u16 = 0;
+            let mut sum_blue: u16 = 0;
+        
             let mut count = 0;
 
-            for i in std::cmp::max(0, row - 1)..std::cmp::min(image.height - 1, row + 1) {
-                for j in std::cmp::max(0, col - 1)..std::cmp::min(image.width - 1, col + 1) {
+            let row_start = row.saturating_sub(1);
+            let row_end   = (row + 1).min(image.height - 1);
+            let col_start = col.saturating_sub(1);
+            let col_end   = (col + 1).min(image.width - 1);
+
+            for i in row_start..=row_end {
+                for j in col_start..=col_end {
                     let pixel = original.get(i, j);
 
-                    sum.rgbtRed   += pixel.rgbtRed;
-                    sum.rgbtGreen += pixel.rgbtGreen;
-                    sum.rgbtBlue  += pixel.rgbtBlue;
+                    sum_red   += pixel.rgbtRed as u16;
+                    sum_green += pixel.rgbtGreen as u16;
+                    sum_blue  += pixel.rgbtBlue as u16;
 
                     count += 1;
                 }
             }
 
             let out = image.get_mut(row, col);
-            out.rgbtRed   = (sum.rgbtRed as u16 / count) as u8;
-            out.rgbtGreen = (sum.rgbtGreen as u16 / count) as u8;
-            out.rgbtBlue  = (sum.rgbtBlue as u16 / count) as u8;
+            out.rgbtRed   = (sum_red / count) as u8;
+            out.rgbtGreen = (sum_green / count) as u8;
+            out.rgbtBlue  = (sum_blue / count) as u8;
         }
     }
 }

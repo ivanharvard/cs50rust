@@ -44,7 +44,7 @@ def log(lines):
 
 @check50.check()
 def exists():
-    """helpers.c exists"""
+    """helper files exists"""
     check50.exists("helpers.c")
     check50.exists("filter.c")
     check50.exists("rust/filter.rs")
