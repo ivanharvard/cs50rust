@@ -65,8 +65,7 @@ def exists():
 @check50.check(exists)
 def compiles():
     """recover.c compiles."""
-    out = check50.run("make recover").stdout()
-    raise ValueError(out)
+    check50.run("make recover")
 
 @check50.check(compiles)
 def test_noimage():
