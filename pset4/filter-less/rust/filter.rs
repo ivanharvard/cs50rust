@@ -27,10 +27,10 @@ fn grayscale(image: &mut cs50::Array2D<'_, RGBTRIPLE>) {
             let pixel = *image.get(row, col);
 
             let avg   = ((
-                pixel.rgbtRed as u16 +
-                pixel.rgbtGreen as u16 +
-                pixel.rgbtBlue as u16
-            ) / 3) as u8;
+                pixel.rgbtRed as f32 +
+                pixel.rgbtGreen as f32 +
+                pixel.rgbtBlue as f32
+            ) / 3.0).round() as u8;
 
             let out = image.get_mut(row, col);
             out.rgbtRed   = avg;
@@ -132,9 +132,9 @@ fn blur(image: &mut cs50::Array2D<'_, RGBTRIPLE>) {
             }
 
             let out = image.get_mut(row, col);
-            out.rgbtRed   = (sum_red / count) as u8;
-            out.rgbtGreen = (sum_green / count) as u8;
-            out.rgbtBlue  = (sum_blue / count) as u8;
+            out.rgbtRed   = (sum_red as f32 / count as f32).round() as u8;
+            out.rgbtGreen = (sum_green as f32 / count as f32).round() as u8;
+            out.rgbtBlue  = (sum_blue as f32 / count as f32).round() as u8;
         }
     }
 }

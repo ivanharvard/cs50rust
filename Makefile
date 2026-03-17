@@ -62,12 +62,13 @@ clean-all: clean
 	@requested="$@"; \
 	if [[ "$$requested" == check-* ]]; then \
 		target="$${requested#check-}"; \
+		target_dir="$$(dirname "$$target")"; \
 		slug_suffix="$(if $(check_path),$(check_path),$${requested#check-})"; \
 		echo "Building $$target before running checks..."; \
 		$(MAKE) "$$target" || exit $$?; \
-		echo "Running check50..."; \
+		echo "Running check50 from $$target_dir..."; \
 		echo "Slug: $(CHECK50_REPO)/$$slug_suffix"; \
-		check50 $(CHECK50_REPO)/$$slug_suffix --local; \
+		cd "$$target_dir" && check50 $(CHECK50_REPO)/$$slug_suffix --local; \
 		exit $$?; \
 	fi; \
 	\
