@@ -68,6 +68,14 @@ def compiles():
     check50.run("make recover")
 
 @check50.check(compiles)
+def debug_run():
+    """debug recover runtime"""
+    check50.run("ls -l recover").exit(0)
+    check50.run("file recover").exit(0)
+    check50.run("ldd recover").exit(0)
+    check50.run("./recover").exit()
+
+@check50.check(compiles)
 def test_noimage():
     """handles lack of forensic image"""
     check50.run("./recover").exit(1)
