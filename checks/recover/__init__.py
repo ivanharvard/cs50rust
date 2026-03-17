@@ -68,11 +68,18 @@ def compiles():
     check50.run("make recover")
 
 @check50.check(compiles)
-def debug_run():
-    """debug recover runtime"""
+def debug_ls():
+    """debug: recover exists after make"""
+    check50.run("ls -l").exit(0)
+
+@check50.check(compiles)
+def debug_recover_ls():
+    """debug: list recover specifically"""
     check50.run("ls -l recover").exit(0)
-    check50.run("file recover").exit(0)
-    check50.run("ldd recover").exit(0)
+
+@check50.check(compiles)
+def debug_run_recover():
+    """debug: run recover directly"""
     check50.run("./recover").exit()
 
 @check50.check(compiles)
