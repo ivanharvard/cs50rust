@@ -6,10 +6,19 @@ CC := clang
 CFLAGS := -ggdb3 -O0 -std=c11 -Wall -Werror -Wextra -Wpedantic
 RUSTC := rustc
 
+MAKEFLAGS += -rR
+.SUFFIXES:
+
 .DEFAULT_GOAL := help
 
 .PHONY: help clean clean-all
 Makefile: ;
+%.c: ;
+%.h: ;
+%.rs: ;
+%.o: ;
+%/Makefile: ;
+
 
 help:
 	@echo "Usage:"
@@ -81,6 +90,11 @@ clean-all: clean
 	if [ -f "$$dir/Makefile" ] && [ "$$dir" != "." ]; then \
 		echo "Delegating to $$dir/Makefile -> $$name"; \
 		$(MAKE) -C "$$dir" "$$name"; \
+	elif [ -f "$$dir/$$name.c" ] && [ -f "$$dir/rust/$$name.rs" ]; then \
+		echo "Compiling Rust staticlib $$dir/rust/$$name.rs"; \
+		$(RUSTC) --crate-type staticlib --edition 2021 "$$dir/rust/$$name.rs" -o "$$dir/.lib$$name.a"; \
+		echo "Compiling C wrapper $$dir/$$name.c"; \
+		$(CC) $(CFLAGS) "$$dir/$$name.c" "$$dir/.lib$$name.a" -o "$$target"; \
 	elif [ -f "$$dir/$$name.c" ]; then \
 		echo "Compiling C source $$dir/$$name.c"; \
 		$(CC) $(CFLAGS) "$$dir/$$name.c" -o "$$target"; \
