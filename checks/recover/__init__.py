@@ -57,7 +57,7 @@ HASHES = [
 @check50.check()
 def exists():
     """recover.c exists."""
-    check50.include("card.raw")
+    check50.include("card.raw", "rust/recover.rs", "rust/cs50.rs")
     check50.exists("recover.c")
 
 @check50.check(exists)
