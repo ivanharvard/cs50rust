@@ -30,6 +30,8 @@ int main(void)
 
     // Free memory
     free_family(p);
+
+    return 0;
 }
 
 person *create_family(int generations)

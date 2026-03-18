@@ -35,6 +35,8 @@ int main(void)
 
     // Free memory
     free_family(p);
+
+    return 0;
 }
 
 // Create a new individual with `generations`

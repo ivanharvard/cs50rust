@@ -59,6 +59,4 @@ int main(void)
     printf(check_alleles(p) ? "allele_true" : "allele_false");
 
     free_family(p);
-
-    return 0;
 }
