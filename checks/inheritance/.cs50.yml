@@ -1,7 +1,6 @@
 lab50:
   files:
-    - !exclude "*"
-    - !include inheritance.c
+    - !include "*"
 
 check50:
   files: &check50_files
