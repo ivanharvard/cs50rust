@@ -70,8 +70,7 @@ def compiles():
 @check50.check(compiles)
 def debug_ls():
     """debug: recover exists after make"""
-    check50.exists("recover")
-    check50.run("ls -l").exit(0)
+    raise ValueError(check50.run("ls").stdout())
 
 @check50.check(compiles)
 def debug_recover_ls():
