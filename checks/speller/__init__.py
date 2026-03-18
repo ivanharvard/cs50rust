@@ -12,7 +12,7 @@ def exists():
 @check50.check(exists)
 def compiles():
     """speller compiles"""
-    check50.include("speller.c", "Makefile")
+    check50.include("speller.c")
     if not os.path.exists("dictionary.h"):
         check50.include("dictionary.h")
     check50.run("make").exit(0)
