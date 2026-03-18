@@ -32,6 +32,7 @@ pub extern "C" fn main_rs() {
     let mut buf = [0u8; BLOCK_SIZE];
 
     let mut file_count = 0;
+    let mut in_jpeg = false;
     loop {
         let bytes_read = file.read(&mut buf).unwrap();
         if bytes_read == 0 {
@@ -41,15 +42,13 @@ pub extern "C" fn main_rs() {
         if buf[0] == BYTE0 &&
            buf[1] == BYTE1 &&
            buf[2] == BYTE2 &&
-           (buf[3] & BYTE3_MASK) == BYTE3_HI_NIBBLE {
+           (buf[3] & BYTE3_MASK) == BYTE3_HI_NIBBLE || in_jpeg {
             // found a new JPEG header
             let out_filename = format!("{:03}.jpg", file_count);
             let mut out = std::fs::File::create(out_filename).unwrap();
             out.write_all(&buf).unwrap();
             file_count += 1;
+            in_jpeg = true;
         }
     }
-
-
-    
 }
