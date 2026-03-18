@@ -11,8 +11,7 @@ MAKEFLAGS += -rR
 
 .DEFAULT_GOAL := help
 
-.PHONY: help clean clean-all
-.PHONY: test-%
+.PHONY: help clean clean-all test-%
 Makefile: ;
 %.c: ;
 %.h: ;
@@ -23,12 +22,10 @@ Makefile: ;
 help:
 	@echo "Usage:"
 	@echo "  make <target>"
-	@echo "  make test-<target>"
+	@echo "  make test-<name>"
 	@echo "  make check-<target>"
-	@echo "  make check-<target> check_path=<slug>"
 
 clean:
-	@echo "Cleaning common build artifacts..."
 	@find . -type f \( \
 		-name '*.o' -o \
 		-name '*.out' -o \
@@ -41,42 +38,24 @@ clean:
 	@find . -type d -name '__pycache__' -prune -exec rm -rf {} +
 
 clean-all: clean
-	@echo "Cleaning common CS50-style binaries..."
-	@find ./pset* -maxdepth 3 -type f \( \
-		-name 'filter' -o \
-		-name 'recover' -o \
-		-name 'speller' -o \
-		-name 'volume' -o \
-		-name 'caesar' -o \
-		-name 'substitution' -o \
-		-name 'plurality' -o \
-		-name 'runoff' -o \
-		-name 'tideman' -o \
-		-name 'sort' -o \
-		-name 'scrabble' -o \
-		-name 'readability' -o \
-		-name 'credit' -o \
-		-name 'cash' -o \
-		-name 'mario' -o \
-		-name 'hello' -o \
-		-name 'inheritance' -o \
-		-name 'inheritance_test' \
-	\) -delete 2>/dev/null || true
 
-# test-inheritance -> inheritance_test
+# make test-inheritance -> build inheritance_test
 test-%: %_test
-	@true
+	@test -x "$<" || { echo "Error: expected executable '$<' was not created"; exit 1; }
 
-# inheritance_test built from inheritance_test.c + rust/inheritance.rs
+# Build inheritance_test from inheritance_test.c and rust/inheritance.rs
 %_test: %_test.c rust/%.rs
 	@echo "Compiling Rust staticlib rust/$*.rs"
 	$(RUSTC) --crate-type staticlib --edition 2021 "rust/$*.rs" -o ".lib$*_test.a"
 	@echo "Compiling C test harness $<"
 	$(CC) $(CFLAGS) "$<" ".lib$*_test.a" -o "$@"
+	@echo "Verifying output $@"
+	@test -f "$@" || { echo "Error: '$@' was not created"; ls -la; exit 1; }
+	@test -x "$@" || { echo "Error: '$@' exists but is not executable"; ls -la "$@"; exit 1; }
+	@ls -la "$@"
 
 .DEFAULT:
 	@requested="$@"; \
-	\
 	if [[ "$$requested" == check-* ]]; then \
 		target="$${requested#check-}"; \
 		target_dir="$$(dirname "$$target")"; \
@@ -88,33 +67,28 @@ test-%: %_test
 		cd "$$target_dir" && check50 $(CHECK50_REPO)/$$slug_suffix --local; \
 		exit $$?; \
 	fi; \
-	\
 	target="$$requested"; \
 	dir="$$(dirname "$$target")"; \
 	name="$$(basename "$$target")"; \
-	\
 	echo "Building $$target..."; \
-	\
 	if [ -f "$$dir/Makefile" ] && [ "$$dir" != "." ]; then \
-		echo "Delegating to $$dir/Makefile -> $$name"; \
 		$(MAKE) -C "$$dir" "$$name"; \
 	elif [ -f "$$dir/$$name.c" ] && [ -f "$$dir/rust/$$name.rs" ]; then \
-		echo "Compiling Rust staticlib $$dir/rust/$$name.rs"; \
 		$(RUSTC) --crate-type staticlib --edition 2021 "$$dir/rust/$$name.rs" -o "$$dir/.lib$$name.a"; \
-		echo "Compiling C wrapper $$dir/$$name.c"; \
 		$(CC) $(CFLAGS) "$$dir/$$name.c" "$$dir/.lib$$name.a" -o "$$target"; \
+		@test -f "$$target" || { echo "Error: '$$target' was not created"; ls -la "$$dir"; exit 1; }; \
 	elif [ -f "$$dir/$$name.c" ]; then \
-		echo "Compiling C source $$dir/$$name.c"; \
 		$(CC) $(CFLAGS) "$$dir/$$name.c" -o "$$target"; \
+		@test -f "$$target" || { echo "Error: '$$target' was not created"; ls -la "$$dir"; exit 1; }; \
 	elif [ -f "$$dir/$$name.rs" ]; then \
-		echo "Compiling Rust source $$dir/$$name.rs"; \
 		$(RUSTC) "$$dir/$$name.rs" -o "$$target"; \
+		@test -f "$$target" || { echo "Error: '$$target' was not created"; ls -la "$$dir"; exit 1; }; \
 	elif [ -f "$$target.c" ]; then \
-		echo "Compiling C source $$target.c"; \
 		$(CC) $(CFLAGS) "$$target.c" -o "$$target"; \
+		@test -f "$$target" || { echo "Error: '$$target' was not created"; ls -la; exit 1; }; \
 	elif [ -f "$$target.rs" ]; then \
-		echo "Compiling Rust source $$target.rs"; \
 		$(RUSTC) "$$target.rs" -o "$$target"; \
+		@test -f "$$target" || { echo "Error: '$$target' was not created"; ls -la; exit 1; }; \
 	else \
 		echo "Error: do not know how to build '$$target'"; \
 		exit 1; \
