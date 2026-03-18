@@ -1,10 +1,6 @@
 check50: 
   files: &check50_files
-    - !exclude "*"
-    - !include Makefile
-    - !require recover.c
-    - !require rust/recover.rs
-    - !require rust/cs50.rs
+    - !include "*"
 
 submit50:
   files: *check50_files
