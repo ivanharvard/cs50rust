@@ -1,3 +1,7 @@
+CC := clang
+CFLAGS := -ggdb3 -O0 -std=c11 -Wall -Werror -Wextra -Wpedantic
+RUSTC := rustc
+
 inheritance_test: inheritance_test.c rust/inheritance.rs
 	@echo "Compiling Rust staticlib rust/inheritance.rs"
 	$(RUSTC) --crate-type staticlib --edition 2021 rust/inheritance.rs -o .libinheritance_test.a
