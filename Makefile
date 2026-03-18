@@ -84,17 +84,21 @@ clean-all: clean
 	target="$$requested"; \
 	dir="$$(dirname "$$target")"; \
 	name="$$(basename "$$target")"; \
+	base="$$name"; \
+	if [[ "$$name" == *_test ]]; then \
+		base="$${name%_test}"; \
+	fi; \
 	\
 	echo "Building $$target..."; \
 	\
 	if [ -f "$$dir/Makefile" ] && [ "$$dir" != "." ]; then \
 		echo "Delegating to $$dir/Makefile -> $$name"; \
 		$(MAKE) -C "$$dir" "$$name"; \
-	elif [ -f "$$dir/$$name.c" ] && [ -f "$$dir/rust/$$name.rs" ]; then \
-		echo "Compiling Rust staticlib $$dir/rust/$$name.rs"; \
-		$(RUSTC) --crate-type staticlib --edition 2021 "$$dir/rust/$$name.rs" -o "$$dir/.lib$$name.a"; \
+	elif [ -f "$$dir/$$name.c" ] && [ -f "$$dir/rust/$$base.rs" ]; then \
+		echo "Compiling Rust staticlib $$dir/rust/$$base.rs"; \
+		$(RUSTC) --crate-type staticlib --edition 2021 "$$dir/rust/$$base.rs" -o "$$dir/.lib$$base.a"; \
 		echo "Compiling C wrapper $$dir/$$name.c"; \
-		$(CC) $(CFLAGS) "$$dir/$$name.c" "$$dir/.lib$$name.a" -o "$$target"; \
+		$(CC) $(CFLAGS) "$$dir/$$name.c" "$$dir/.lib$$base.a" -o "$$target"; \
 	elif [ -f "$$dir/$$name.c" ]; then \
 		echo "Compiling C source $$dir/$$name.c"; \
 		$(CC) $(CFLAGS) "$$dir/$$name.c" -o "$$target"; \
