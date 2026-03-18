@@ -12,8 +12,10 @@ typedef struct person
 person;
 
 person *create_family(int generations);
+person *create_family_rs(int generations);
 void print_family(person *p, int indent);
 void free_family(person *p);
+void free_family_rs(person *p);
 char random_allele();
 
 int main(void)
