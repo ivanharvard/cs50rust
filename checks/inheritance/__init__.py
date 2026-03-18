@@ -27,12 +27,12 @@ def compiles_test():
         f.write("\n")
         f.write(testing)
     check50.run("make test-inheritance")
-    check50.exists("inheritance_test")
+    out = check50.run("ls").stdout()
+    raise ValueError(out)
 
 @check50.check(compiles_test)
 def correct_size():
     """create_family creates correct size of family"""
-    check50.exists("inheritance_test")
     check50.run("./inheritance_test").stdout("size_true.*").exit(0)
 
 
