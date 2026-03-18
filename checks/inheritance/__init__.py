@@ -26,7 +26,7 @@ def compiles_test():
         f.write(inheritance)
         f.write("\n")
         f.write(testing)
-    check50.run("make test-inheritance")
+    check50.run("make test-inheritance").exit(0)
 
 @check50.check(compiles_test)
 def correct_size():
