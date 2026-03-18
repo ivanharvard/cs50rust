@@ -26,33 +26,33 @@ def compiles_test():
         f.write(inheritance)
         f.write("\n")
         f.write(testing)
-    check50.run("make test-inheritance")
+    check50.run("make inheritance_test")
 
 @check50.check(compiles_test)
 def correct_size():
     """create_family creates correct size of family"""
-    check50.run("./inheritance").stdout("size_true.*").exit(0)
+    check50.run("./inheritance_test").stdout("size_true.*").exit(0)
 
 
 @check50.check(compiles_test)
 def inheritance_rules_1():
     """create_family follows inheritance rules 1"""
-    check50.run("./inheritance").stdout(".*allele_true.*").exit(0)
+    check50.run("./inheritance_test").stdout(".*allele_true.*").exit(0)
 
 @check50.check(compiles_test)
 def inheritance_rules_2():
     """create_family follows inheritance rules 2"""
-    check50.run("./inheritance").stdout(".*allele_true.*").exit(0)
+    check50.run("./inheritance_test").stdout(".*allele_true.*").exit(0)
 
 @check50.check(compiles_test)
 def inheritance_rules_3():
     """create_family follows inheritance rules 3"""
-    check50.run("./inheritance").stdout(".*allele_true.*").exit(0)
+    check50.run("./inheritance_test").stdout(".*allele_true.*").exit(0)
 
 @check50.check(compiles_test)
 def inheritance_rules_4():
     """create_family follows inheritance rules 4"""
-    check50.run("export CHECK50_STATIC_INHERITANCE_ENABLED=1 && ./inheritance").stdout(".*allele_true.*").exit(0)
+    check50.run("export CHECK50_STATIC_INHERITANCE_ENABLED=1 && ./inheritance_test").stdout(".*allele_true.*").exit(0)
 
 @check50.check(compiles_test)
 def frees_memory():
