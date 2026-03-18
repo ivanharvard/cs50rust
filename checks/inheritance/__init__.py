@@ -3,6 +3,8 @@ import check50.c
 import re
 import os
 
+check50.config.set_truncate_len(9999)
+
 @check50.check()
 def exists():
     """inheritance.c exists"""
