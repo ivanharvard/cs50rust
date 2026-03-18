@@ -8,6 +8,7 @@ RUSTC := rustc
 
 MAKEFLAGS += -rR
 .SUFFIXES:
+.SECONDARY: %_test
 
 .DEFAULT_GOAL := help
 
