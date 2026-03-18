@@ -19,17 +19,24 @@ Makefile: ;
 %.o: ;
 %/Makefile: ;
 
-
 help:
 	@echo "Usage:"
 	@echo "  make <target>"
+	@echo "  make test-<target>"
 	@echo "  make check-<target>"
 	@echo "  make check-<target> check_path=<slug>"
 	@echo ""
 	@echo "Examples:"
 	@echo "  make pset4/filter-less/filter"
+	@echo "  make test-pset5/inheritance/inheritance"
 	@echo "  make check-pset4/filter-less/filter"
 	@echo "  make check-pset4/filter-less/filter check_path=filter/less"
+	@echo ""
+	@echo "test-<target> convention:"
+	@echo "  target:      pset5/inheritance/inheritance"
+	@echo "  test C:      pset5/inheritance/inheritance_test.c"
+	@echo "  Rust source: pset5/inheritance/rust/inheritance.rs"
+	@echo "  output:      pset5/inheritance/inheritance_test"
 	@echo ""
 	@echo "check50 slug format:"
 	@echo "  $(CHECK50_REPO)/<check_path>"
@@ -43,6 +50,9 @@ clean:
 		-name '*.a' -o \
 		-name '*.so' \
 	\) -delete
+	@find . -type f \( \
+		-name 'inheritance_test' \
+	\) -delete 2>/dev/null || true
 	@find . -type d -name 'target' -prune -exec rm -rf {} +
 	@find . -type d -name '__pycache__' -prune -exec rm -rf {} +
 
@@ -64,11 +74,14 @@ clean-all: clean
 		-name 'credit' -o \
 		-name 'cash' -o \
 		-name 'mario' -o \
-		-name 'hello' \
+		-name 'hello' -o \
+		-name 'inheritance' -o \
+		-name 'inheritance_test' \
 	\) -delete 2>/dev/null || true
 
 .DEFAULT:
 	@requested="$@"; \
+	\
 	if [[ "$$requested" == check-* ]]; then \
 		target="$${requested#check-}"; \
 		target_dir="$$(dirname "$$target")"; \
@@ -81,24 +94,50 @@ clean-all: clean
 		exit $$?; \
 	fi; \
 	\
+	if [[ "$$requested" == test-* ]]; then \
+		target="$${requested#test-}"; \
+		dir="$$(dirname "$$target")"; \
+		name="$$(basename "$$target")"; \
+		test_c="$$dir/$${name}_test.c"; \
+		rust_src="$$dir/rust/$${name}.rs"; \
+		out="$$dir/$${name}_test"; \
+		lib="$$dir/.lib$${name}_test.a"; \
+		\
+		echo "Building test target for $$target..."; \
+		\
+		if [ -f "$$dir/Makefile" ] && [ "$$dir" != "." ]; then \
+			echo "Delegating to $$dir/Makefile -> test-$$name"; \
+			$(MAKE) -C "$$dir" "test-$$name"; \
+		elif [ -f "$$test_c" ] && [ -f "$$rust_src" ]; then \
+			echo "Compiling Rust staticlib $$rust_src"; \
+			$(RUSTC) --crate-type staticlib --edition 2021 "$$rust_src" -o "$$lib"; \
+			echo "Compiling C test harness $$test_c"; \
+			$(CC) $(CFLAGS) "$$test_c" "$$lib" -o "$$out"; \
+		elif [ -f "$$test_c" ]; then \
+			echo "Compiling C test harness $$test_c"; \
+			$(CC) $(CFLAGS) "$$test_c" -o "$$out"; \
+		else \
+			echo "Error: do not know how to build test target '$$requested'"; \
+			echo "Expected at least: $$test_c"; \
+			exit 1; \
+		fi; \
+		exit $$?; \
+	fi; \
+	\
 	target="$$requested"; \
 	dir="$$(dirname "$$target")"; \
 	name="$$(basename "$$target")"; \
-	base="$$name"; \
-	if [[ "$$name" == *_test ]]; then \
-		base="$${name%_test}"; \
-	fi; \
 	\
 	echo "Building $$target..."; \
 	\
 	if [ -f "$$dir/Makefile" ] && [ "$$dir" != "." ]; then \
 		echo "Delegating to $$dir/Makefile -> $$name"; \
 		$(MAKE) -C "$$dir" "$$name"; \
-	elif [ -f "$$dir/$$name.c" ] && [ -f "$$dir/rust/$$base.rs" ]; then \
-		echo "Compiling Rust staticlib $$dir/rust/$$base.rs"; \
-		$(RUSTC) --crate-type staticlib --edition 2021 "$$dir/rust/$$base.rs" -o "$$dir/.lib$$base.a"; \
+	elif [ -f "$$dir/$$name.c" ] && [ -f "$$dir/rust/$$name.rs" ]; then \
+		echo "Compiling Rust staticlib $$dir/rust/$$name.rs"; \
+		$(RUSTC) --crate-type staticlib --edition 2021 "$$dir/rust/$$name.rs" -o "$$dir/.lib$$name.a"; \
 		echo "Compiling C wrapper $$dir/$$name.c"; \
-		$(CC) $(CFLAGS) "$$dir/$$name.c" "$$dir/.lib$$base.a" -o "$$target"; \
+		$(CC) $(CFLAGS) "$$dir/$$name.c" "$$dir/.lib$$name.a" -o "$$target"; \
 	elif [ -f "$$dir/$$name.c" ]; then \
 		echo "Compiling C source $$dir/$$name.c"; \
 		$(CC) $(CFLAGS) "$$dir/$$name.c" -o "$$target"; \
