@@ -1,0 +1,1 @@
+/mnt/c/Users/ivang/Documents/github/graph-project/cs50rust/pset6/rust/target/debug/libcs50rust.so: /mnt/c/Users/ivang/Documents/github/graph-project/cs50rust/pset6/rust/src/hello.rs /mnt/c/Users/ivang/Documents/github/graph-project/cs50rust/pset6/rust/src/lib.rs

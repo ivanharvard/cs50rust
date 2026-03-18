@@ -1,0 +1,11 @@
+[package]
+name = "cs50rust"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "cs50rust"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.28", features = ["extension-module"] }
