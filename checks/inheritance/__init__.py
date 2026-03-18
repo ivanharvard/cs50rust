@@ -22,7 +22,7 @@ def compiles_test():
     check50.run("make inheritance")
     inheritance = re.sub(r"int\s+main\(", "int distro_main(", open("inheritance.c").read())
     testing = open("testing.c").read()
-    with open("inheritance_test3.c", "w") as f:
+    with open("inheritance_test.c", "w") as f:
         f.write(inheritance)
         f.write("\n")
         f.write(testing)
